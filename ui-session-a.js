@@ -1,5 +1,5 @@
 const routineChooser=document.getElementById('routineChooser'),sessionView=document.getElementById('sessionView'),routineCards=document.getElementById('routineCards'),draftBanner=document.getElementById('draftBanner'),exerciseList=document.getElementById('exerciseList'),finishedSection=document.getElementById('finishedSection'),finishedList=document.getElementById('finishedList'),orderSection=document.getElementById('orderSection'),orderList=document.getElementById('orderList');
-function showChooser(){activeRoutineId=null;sessionView.classList.add('hidden');routineChooser.classList.remove('hidden');orderSection.classList.add('hidden');renderChooser()}
+function showChooser(){activeRoutineId=null;sessionView.classList.add('hidden');routineChooser.classList.remove('hidden');orderSection.classList.add('hidden');document.getElementById('sessionTopActions')?.classList.add('hidden');renderChooser()}
 function renderChooser(){
  routineCards.innerHTML='';draftBanner.innerHTML='';const drafts=Object.keys(data.drafts).filter(id=>ROUTINES[id]);
  if(drafts.length){const box=document.createElement('div');box.className='card summary active-banner';box.innerHTML=`<div class="eyebrow">SESIONES EN CURSO</div><div class="sub" style="margin-top:5px">Tienes ${drafts.length} borrador${drafts.length>1?'es':''}. Puedes continuar cuando quieras.</div>`;draftBanner.appendChild(box)}
@@ -7,13 +7,13 @@ function renderChooser(){
 }
 function openRoutine(rid){if(!data.drafts[rid]){data.drafts[rid]=createDraft(rid);save()}activeRoutineId=rid;routineChooser.classList.add('hidden');sessionView.classList.remove('hidden');renderSession()}
 function renderSession(){
- const rid=activeRoutineId;if(!rid||!data.drafts[rid])return showChooser();const r=ROUTINES[rid],d=data.drafts[rid];sessionView.classList.toggle('paused-session',!!d.paused);
+ const rid=activeRoutineId;if(!rid||!data.drafts[rid])return showChooser();const r=ROUTINES[rid],d=data.drafts[rid];document.getElementById('sessionTopActions')?.classList.remove('hidden');sessionView.classList.toggle('paused-session',!!d.paused);
  document.getElementById('sessionDay').textContent=r.day;document.getElementById('sessionName').textContent=r.name;
  const doneCount=Object.values(d.exercises).filter(x=>x.finished).length;
  document.getElementById('sessionMeta').innerHTML=`${doneCount}/${r.exercises.length} finalizados · ${r.rir}<div style="margin-top:7px;line-height:1.45">${r.flow}<br>${r.setup}<br>${r.between}</div>`;
  document.getElementById('sessionProgress').style.width=(doneCount/r.exercises.length*100)+'%';
  const pb=document.getElementById('pauseBadge');pb.classList.toggle('hidden',!d.paused);
- document.getElementById('pauseSession').textContent=d.paused?'▶ Retomar sesión':'⏸ Pausar sesión';
+ document.getElementById('pauseSession').textContent=d.paused?'▶ Retomar sesión':'⏸ Pausar sesión';const tp=document.getElementById('topPauseSession');if(tp){tp.textContent=d.paused?'▶':'⏸';tp.setAttribute('aria-label',d.paused?'Retomar sesión':'Pausar sesión');tp.title=d.paused?'Retomar sesión':'Pausar sesión'};
  exerciseList.innerHTML='';finishedList.innerHTML='';
  routineOrder(rid).forEach(eid=>{const ex=findExercise(rid,eid),st=d.exercises[eid];if(st.finished){const p=document.createElement('button');p.className='done-pill';p.textContent=ex.name;p.onclick=()=>{st.finished=false;d.updatedAt=nowISO();save();renderSession()};finishedList.appendChild(p)}else exerciseList.appendChild(buildExercise(rid,ex,st))});
  finishedSection.classList.toggle('hidden',doneCount===0);renderOrder();updateTopStatus()
