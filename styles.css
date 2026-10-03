@@ -34,3 +34,88 @@
 /* iPhone: arrastre táctil estable y controles siempre visibles */
 #orderList,.orderrow,.drag-handle{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.orderrow *{-webkit-user-select:none!important;user-select:none!important}.drag-handle{touch-action:none!important;-webkit-user-drag:none!important}.orderrow.dragging{box-shadow:0 10px 24px rgba(0,0,0,.28);pointer-events:none}.orderrow.dragging .drag-handle{color:#fff!important}.top-session-actions{position:fixed;top:calc(env(safe-area-inset-top) + 8px);right:max(66px,calc((100vw - 780px)/2 + 66px));z-index:95;padding:4px;border:1px solid rgba(42,54,82,.85);border-radius:14px;background:rgba(8,13,25,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.22)}.top-session-actions.hidden{display:none!important}
 @media(max-width:430px){.top-session-actions{right:60px;top:calc(env(safe-area-inset-top) + 7px)}.top-session-actions .top-action{width:39px;height:39px}}
+
+/* Barra de entrenamiento v10: cinco grupos nítidos en una sola fila */
+.top{position:relative!important;top:auto!important;z-index:30;background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.workout-strip{
+  position:sticky!important;
+  top:calc(env(safe-area-inset-top) + 4px)!important;
+  z-index:96!important;
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.35fr) minmax(48px,.72fr) minmax(48px,.72fr)!important;
+  gap:1px!important;
+  background:var(--line)!important;
+  border:1px solid var(--line)!important;
+  border-radius:13px!important;
+  overflow:hidden!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.28)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.workout-strip .strip-item{
+  min-width:0!important;
+  min-height:58px!important;
+  padding:7px 3px!important;
+  background:#0f1728!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  filter:none!important;
+  opacity:1!important;
+}
+.workout-strip .strip-item span{
+  font-size:8px!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  letter-spacing:.055em!important;
+  color:#9eabc0!important;
+  white-space:nowrap!important;
+  text-shadow:none!important;
+}
+.workout-strip .strip-item b{
+  display:block!important;
+  margin-top:4px!important;
+  font-size:15px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  color:#fff!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:-.02em!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+.strip-action{padding:0!important}
+.strip-action-btn{
+  width:100%!important;
+  min-width:0!important;
+  height:31px!important;
+  min-height:31px!important;
+  margin-top:3px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:8px!important;
+  background:#172239!important;
+  color:#fff!important;
+  font-size:17px!important;
+  font-weight:950!important;
+  line-height:31px!important;
+  display:grid!important;
+  place-items:center!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.strip-action-btn:active{transform:scale(.94)}
+.strip-action-btn.paused-action{background:#342a13!important;color:#ffd76d!important}
+.strip-action-finish{background:#101d19!important}
+.strip-action-finish .strip-action-btn{background:#153222!important;color:#aef1c8!important}
+.pause-badge{display:none!important}
+.top-session-actions{display:none!important;position:static!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media(max-width:430px){
+  .workout-strip{top:calc(env(safe-area-inset-top) + 3px)!important;grid-template-columns:minmax(0,1.18fr) minmax(0,1.18fr) minmax(0,1.3fr) minmax(46px,.72fr) minmax(46px,.72fr)!important}
+  .workout-strip .strip-item{min-height:56px!important;padding:6px 2px!important}
+  .workout-strip .strip-item span{font-size:7.5px!important}
+  .workout-strip .strip-item b{font-size:14px!important}
+  .strip-action-btn{height:30px!important;min-height:30px!important;font-size:16px!important}
+}
