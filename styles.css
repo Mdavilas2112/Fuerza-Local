@@ -125,3 +125,5 @@
 @media(max-width:430px){.plan-edit-row{grid-template-columns:32px minmax(0,1fr) 92px;padding:8px 6px}.plan-edit-info b{font-size:10.5px}.plan-rest-field input{font-size:13px}.scope-card{padding:16px}}
 
 .next-plan-note{margin:8px 0;padding:8px 10px;border:1px solid #665129;border-radius:10px;background:#282113;color:#ffd878;font-size:10px;font-weight:850}
+
+.builder-field input[type=text]{width:100%;min-height:42px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:15px;padding:8px 10px;outline:none}.builder-field input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(139,92,246,.13)}
