@@ -1,28 +1,43 @@
-let orderDrag={timer:null,row:null,handle:null,pointerId:null,dragging:false,startY:0};
+let orderDrag={timer:null,row:null,handle:null,dragging:false,startY:0,touchId:null,mode:null};
 function clearOrderDragTimer(){if(orderDrag.timer){clearTimeout(orderDrag.timer);orderDrag.timer=null}}
 function persistDraggedOrder(){
  if(!activeRoutineId)return;const rid=activeRoutineId,arr=[...orderList.querySelectorAll('.orderrow')].map(r=>r.dataset.eid).filter(Boolean);
  if(!arr.length)return;data.orders[rid]=[...arr];data.drafts[rid].order=[...arr];save();
  [...orderList.querySelectorAll('.orderrow')].forEach((row,i)=>{const n=row.querySelector('[data-order-index]');if(n)n.textContent=(i+1)+'.'})
 }
+function beginOrderDrag(row,handle,y,id,mode){
+ clearOrderDragTimer();orderDrag={timer:null,row,handle,dragging:false,startY:y,touchId:id,mode};
+ orderDrag.timer=setTimeout(()=>{if(orderDrag.row!==row)return;orderDrag.dragging=true;row.classList.add('dragging');if(navigator.vibrate)try{navigator.vibrate(20)}catch{}},180)
+}
+function moveOrderDrag(x,y){
+ if(!orderDrag.row)return;
+ if(!orderDrag.dragging){if(Math.abs(y-orderDrag.startY)>10){clearOrderDragTimer();orderDrag.row=null}return}
+ const row=orderDrag.row,hit=document.elementFromPoint(x,y)?.closest('.orderrow');
+ if(hit&&hit!==row&&orderList.contains(hit)){const rect=hit.getBoundingClientRect(),before=y<rect.top+rect.height/2;orderList.insertBefore(row,before?hit:hit.nextSibling)}
+ if(y<115)window.scrollBy(0,-8);else if(y>window.innerHeight-125)window.scrollBy(0,8)
+}
+function endOrderDrag(){
+ clearOrderDragTimer();const row=orderDrag.row,wasDragging=orderDrag.dragging;
+ if(row&&wasDragging){row.classList.remove('dragging');persistDraggedOrder();toast('Orden actualizado')}
+ orderDrag={timer:null,row:null,handle:null,dragging:false,startY:0,touchId:null,mode:null}
+}
 function attachLongPressDrag(handle,row){
- handle.onpointerdown=e=>{
-  if(e.pointerType==='mouse'&&e.button!==0)return;clearOrderDragTimer();orderDrag={timer:null,row,handle,pointerId:e.pointerId,dragging:false,startY:e.clientY};
-  orderDrag.timer=setTimeout(()=>{orderDrag.dragging=true;row.classList.add('dragging');try{handle.setPointerCapture(e.pointerId)}catch{}},260)
- };
- handle.onpointermove=e=>{
-  if(orderDrag.row!==row)return;
-  if(!orderDrag.dragging){if(Math.abs(e.clientY-orderDrag.startY)>8)clearOrderDragTimer();return}
-  e.preventDefault();const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('.orderrow');if(!hit||hit===row||!orderList.contains(hit))return;
-  const rect=hit.getBoundingClientRect(),before=e.clientY<rect.top+rect.height/2;orderList.insertBefore(row,before?hit:hit.nextSibling)
- };
- const end=e=>{
-  if(orderDrag.row!==row)return;clearOrderDragTimer();
-  if(orderDrag.dragging){row.classList.remove('dragging');persistDraggedOrder();toast('Orden actualizado')}
-  try{handle.releasePointerCapture(orderDrag.pointerId)}catch{}
-  orderDrag={timer:null,row:null,handle:null,pointerId:null,dragging:false,startY:0}
- };
- handle.onpointerup=end;handle.onpointercancel=end;handle.onlostpointercapture=e=>{if(orderDrag.row===row&&orderDrag.dragging)end(e)}
+ handle.addEventListener('contextmenu',e=>e.preventDefault());
+ handle.addEventListener('selectstart',e=>e.preventDefault());
+ handle.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1)return;e.preventDefault();const t=e.touches[0];beginOrderDrag(row,handle,t.clientY,t.identifier,'touch')
+ },{passive:false});
+ handle.addEventListener('touchmove',e=>{
+  if(orderDrag.row!==row||orderDrag.mode!=='touch')return;const t=[...e.touches].find(x=>x.identifier===orderDrag.touchId)||e.touches[0];if(!t)return;e.preventDefault();moveOrderDrag(t.clientX,t.clientY)
+ },{passive:false});
+ handle.addEventListener('touchend',e=>{if(orderDrag.row!==row||orderDrag.mode!=='touch')return;e.preventDefault();endOrderDrag()},{passive:false});
+ handle.addEventListener('touchcancel',e=>{if(orderDrag.row!==row||orderDrag.mode!=='touch')return;e.preventDefault();endOrderDrag()},{passive:false});
+ handle.addEventListener('mousedown',e=>{
+  if(e.button!==0)return;e.preventDefault();beginOrderDrag(row,handle,e.clientY,'mouse','mouse');
+  const move=ev=>{ev.preventDefault();moveOrderDrag(ev.clientX,ev.clientY)};
+  const up=ev=>{ev.preventDefault();document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);endOrderDrag()};
+  document.addEventListener('mousemove',move,{passive:false});document.addEventListener('mouseup',up,{passive:false})
+ })
 }
 function renderOrder(){
  if(!activeRoutineId)return;const rid=activeRoutineId,arr=routineOrder(rid);orderList.innerHTML='';
