@@ -14,7 +14,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="toprow"><div class="brand">Fuerza<small>Tu plan · progresión sesión a sesión</small></div><div class="top-actions"><div id="sessionTopActions" class="top-session-actions hidden"><button id="topPauseSession" class="iconbtn top-action" aria-label="Pausar sesión" title="Pausar sesión">⏸</button><button id="topFinishSession" class="iconbtn top-action finish-top" aria-label="Finalizar sesión" title="Finalizar sesión">■</button></div><button id="homeBtn" class="iconbtn" aria-label="Rutinas">⌂</button></div></div></header>
+<header class="top"><div class="toprow"><div class="brand">Fuerza<small>Tu plan · progresión sesión a sesión</small></div><div class="top-actions"><button id="homeBtn" class="iconbtn" aria-label="Rutinas">⌂</button></div></div></header>
 
 <main id="trainView">
   <section id="routineChooser">
@@ -28,6 +28,14 @@
       <div class="strip-item"><span>TIEMPO</span><b id="totalElapsed">00:00</b></div>
       <div class="strip-item"><span>SIG. SERIE</span><b id="nextSetTimer">--:--</b></div>
       <div class="strip-item"><span>SIG. EJERCICIO</span><b id="nextExerciseTimer">--:--</b></div>
+      <div class="strip-item strip-action">
+        <span>PAUSA</span>
+        <button id="topPauseSession" class="strip-action-btn" aria-label="Pausar sesión" title="Pausar sesión">⏸</button>
+      </div>
+      <div class="strip-item strip-action strip-action-finish">
+        <span>FIN</span>
+        <button id="topFinishSession" class="strip-action-btn" aria-label="Finalizar sesión" title="Finalizar sesión">■</button>
+      </div>
       <div id="pauseBadge" class="pause-badge hidden">PAUSA</div>
     </div>
 
