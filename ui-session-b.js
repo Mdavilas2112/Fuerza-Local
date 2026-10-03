@@ -62,7 +62,7 @@ function openFinishPrompt(){
  finishPrompt.classList.remove('hidden');document.body.classList.add('modal-open');requestAnimationFrame(()=>finishSaveBtn.focus())
 }
 finishSaveBtn.onclick=()=>{if(archiveCurrentSession())closeFinishPrompt()};
-finishDiscardBtn.onclick=()=>{closeFinishPrompt();discardCurrentSession(true)};
+finishDiscardBtn.onclick=()=>{if(discardCurrentSession(false))closeFinishPrompt()};
 finishCancelBtn.onclick=closeFinishPrompt;
 finishPrompt.addEventListener('click',e=>{if(e.target===finishPrompt)closeFinishPrompt()});
 finishPrompt.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeFinishPrompt()}else if(e.key==='Enter'&&e.target!==finishDiscardBtn&&e.target!==finishCancelBtn){e.preventDefault();finishSaveBtn.click()}});
