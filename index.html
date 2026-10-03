@@ -14,7 +14,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="toprow"><div class="brand">Fuerza<small>Tu plan · progresión sesión a sesión</small></div><button id="homeBtn" class="iconbtn" aria-label="Rutinas">⌂</button></div></header>
+<header class="top"><div class="toprow"><div class="brand">Fuerza<small>Tu plan · progresión sesión a sesión</small></div><div class="top-actions"><div id="sessionTopActions" class="top-session-actions hidden"><button id="topPauseSession" class="iconbtn top-action" aria-label="Pausar sesión" title="Pausar sesión">⏸</button><button id="topFinishSession" class="iconbtn top-action finish-top" aria-label="Finalizar sesión" title="Finalizar sesión">■</button></div><button id="homeBtn" class="iconbtn" aria-label="Rutinas">⌂</button></div></div></header>
 
 <main id="trainView">
   <section id="routineChooser">
@@ -87,6 +87,16 @@
   <button id="navCalendar"><span class="navico">📅</span>Calendario</button>
   <button id="navData"><span class="navico">🗂️</span>Datos</button>
 </nav>
+<div id="finishPrompt" class="finish-prompt-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="finishPromptTitle">
+  <div class="finish-prompt">
+    <div class="finish-prompt-icon">✓</div>
+    <div id="finishPromptTitle" class="title">Finalizar entrenamiento</div>
+    <div id="finishPromptText" class="sub finish-prompt-text">¿Qué quieres hacer con esta sesión?</div>
+    <button id="finishSaveBtn" class="finish-save">Guardar entrenamiento</button>
+    <button id="finishDiscardBtn" class="finish-discard">Descartar entrenamiento</button>
+    <button id="finishCancelBtn" class="finish-cancel">Seguir entrenando</button>
+  </div>
+</div>
 <div id="toast" class="toast"></div>
 
 <script src="routines.js"></script>
