@@ -13,7 +13,7 @@ function renderSession(){
  document.getElementById('sessionMeta').innerHTML=`${doneCount}/${r.exercises.length} finalizados · ${r.rir}<div style="margin-top:7px;line-height:1.45">${r.flow}<br>${r.setup}<br>${r.between}</div>`;
  document.getElementById('sessionProgress').style.width=(doneCount/r.exercises.length*100)+'%';
  const pb=document.getElementById('pauseBadge');pb.classList.toggle('hidden',!d.paused);
- document.getElementById('pauseSession').textContent=d.paused?'▶ Retomar sesión':'⏸ Pausar sesión';const tp=document.getElementById('topPauseSession');if(tp){tp.textContent=d.paused?'▶':'⏸';tp.setAttribute('aria-label',d.paused?'Retomar sesión':'Pausar sesión');tp.title=d.paused?'Retomar sesión':'Pausar sesión'};
+ document.getElementById('pauseSession').textContent=d.paused?'▶ Retomar sesión':'⏸ Pausar sesión';const tp=document.getElementById('topPauseSession');if(tp){tp.textContent=d.paused?'▶':'⏸';tp.setAttribute('aria-label',d.paused?'Retomar sesión':'Pausar sesión');tp.title=d.paused?'Retomar sesión':'Pausar sesión';tp.classList.toggle('paused-action',!!d.paused)};
  exerciseList.innerHTML='';finishedList.innerHTML='';
  routineOrder(rid).forEach(eid=>{const ex=findExercise(rid,eid),st=d.exercises[eid];if(st.finished){const p=document.createElement('button');p.className='done-pill';p.textContent=ex.name;p.onclick=()=>{st.finished=false;d.updatedAt=nowISO();save();renderSession()};finishedList.appendChild(p)}else exerciseList.appendChild(buildExercise(rid,ex,st))});
  finishedSection.classList.toggle('hidden',doneCount===0);renderOrder();updateTopStatus()
