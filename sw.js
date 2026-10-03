@@ -1,8 +1,8 @@
-const CACHE='fuerza-tracker-v3';
+const CACHE='fuerza-tracker-v4';
 const ASSETS=[
   './','./index.html','./styles.css','./manifest.webmanifest',
   './routines.js','./data.js','./ui-session-a.js','./ui-session-b.js',
-  './ui-progress.js','./ui-data.js','./icon-192.png','./icon-512.png'
+  './ui-progress.js','./ui-calendar.js','./ui-data.js','./icon-192.png','./icon-512.png'
 ];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(Promise.all([
