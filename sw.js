@@ -1,4 +1,4 @@
-const CACHE='fuerza-tracker-v11';
+const CACHE='fuerza-tracker-v12';
 const ASSETS=[
   './','./index.html','./styles.css','./manifest.webmanifest',
   './routines.js','./data.js','./ui-routine-builder.js','./ui-session-a.js','./ui-session-b.js',
