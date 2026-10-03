@@ -1,6 +1,41 @@
-function renderOrder(){if(!activeRoutineId)return;const rid=activeRoutineId,arr=routineOrder(rid);orderList.innerHTML='';arr.forEach((eid,i)=>{const ex=findExercise(rid,eid),row=document.createElement('div');row.className='orderrow';row.innerHTML=`<div><b>${i+1}. ${ex.code} · ${ex.name}</b><div class="sub">${ex.sets}×${ex.min}–${ex.max}</div></div>`;const up=document.createElement('button');up.textContent='↑';up.disabled=i===0;up.onclick=()=>moveExercise(eid,-1);const down=document.createElement('button');down.textContent='↓';down.disabled=i===arr.length-1;down.onclick=()=>moveExercise(eid,1);row.append(up,down);orderList.appendChild(row)})}
+let orderDrag={timer:null,row:null,handle:null,pointerId:null,dragging:false,startY:0};
+function clearOrderDragTimer(){if(orderDrag.timer){clearTimeout(orderDrag.timer);orderDrag.timer=null}}
+function persistDraggedOrder(){
+ if(!activeRoutineId)return;const rid=activeRoutineId,arr=[...orderList.querySelectorAll('.orderrow')].map(r=>r.dataset.eid).filter(Boolean);
+ if(!arr.length)return;data.orders[rid]=[...arr];data.drafts[rid].order=[...arr];save();
+ [...orderList.querySelectorAll('.orderrow')].forEach((row,i)=>{const n=row.querySelector('[data-order-index]');if(n)n.textContent=(i+1)+'.'})
+}
+function attachLongPressDrag(handle,row){
+ handle.onpointerdown=e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;clearOrderDragTimer();orderDrag={timer:null,row,handle,pointerId:e.pointerId,dragging:false,startY:e.clientY};
+  orderDrag.timer=setTimeout(()=>{orderDrag.dragging=true;row.classList.add('dragging');try{handle.setPointerCapture(e.pointerId)}catch{}},260)
+ };
+ handle.onpointermove=e=>{
+  if(orderDrag.row!==row)return;
+  if(!orderDrag.dragging){if(Math.abs(e.clientY-orderDrag.startY)>8)clearOrderDragTimer();return}
+  e.preventDefault();const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('.orderrow');if(!hit||hit===row||!orderList.contains(hit))return;
+  const rect=hit.getBoundingClientRect(),before=e.clientY<rect.top+rect.height/2;orderList.insertBefore(row,before?hit:hit.nextSibling)
+ };
+ const end=e=>{
+  if(orderDrag.row!==row)return;clearOrderDragTimer();
+  if(orderDrag.dragging){row.classList.remove('dragging');persistDraggedOrder();toast('Orden actualizado')}
+  try{handle.releasePointerCapture(orderDrag.pointerId)}catch{}
+  orderDrag={timer:null,row:null,handle:null,pointerId:null,dragging:false,startY:0}
+ };
+ handle.onpointerup=end;handle.onpointercancel=end;handle.onlostpointercapture=e=>{if(orderDrag.row===row&&orderDrag.dragging)end(e)}
+}
+function renderOrder(){
+ if(!activeRoutineId)return;const rid=activeRoutineId,arr=routineOrder(rid);orderList.innerHTML='';
+ const hint=document.createElement('div');hint.className='drag-hint';hint.innerHTML='<b>⠿</b> Mantén pulsado el asa y arrastra para cambiar el orden.';orderList.appendChild(hint);
+ arr.forEach((eid,i)=>{
+  const ex=findExercise(rid,eid),row=document.createElement('div');row.className='orderrow';row.dataset.eid=eid;
+  const handle=document.createElement('button');handle.type='button';handle.className='drag-handle';handle.textContent='⠿';handle.setAttribute('aria-label','Mantener pulsado y arrastrar '+ex.name);
+  const info=document.createElement('div');info.innerHTML=`<b><span data-order-index>${i+1}.</span> ${ex.code} · ${ex.name}</b><div class="sub">${ex.sets}×${ex.min}–${ex.max}</div>`;
+  row.append(handle,info);orderList.appendChild(row);attachLongPressDrag(handle,row)
+ })
+}
 function moveExercise(eid,delta){const rid=activeRoutineId,arr=routineOrder(rid),i=arr.indexOf(eid),j=i+delta;if(i<0||j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];data.orders[rid]=[...arr];data.drafts[rid].order=[...arr];save();renderSession()}
-document.getElementById('orderBtn').onclick=()=>{orderSection.classList.toggle('hidden');renderOrder()};
+document.getElementById('orderBtn').onclick=()=>{const opening=orderSection.classList.contains('hidden');orderSection.classList.toggle('hidden');if(opening)renderOrder();else renderSession()};
 document.getElementById('pauseSession').onclick=()=>{if(!activeRoutineId||!data.drafts[activeRoutineId])return;const d=data.drafts[activeRoutineId];if(d.paused){resumeDraft(d);toast('Sesión retomada')}else{pauseDraft(d);toast('Sesión pausada')}renderSession()};
 document.getElementById('discardSession').onclick=()=>{if(!activeRoutineId||!data.drafts[activeRoutineId])return;const rid=activeRoutineId,r=ROUTINES[rid];if(!confirm(`¿Descartar la sesión de ${r.day} · ${r.name}?\n\nNo se guardará este entrenamiento en tu historial.`))return;delete data.drafts[rid];save();activeRoutineId=null;toast('Sesión descartada');showChooser();if(typeof renderCalendar==='function')renderCalendar()};
 document.getElementById('finishSession').onclick=()=>{const rid=activeRoutineId,d=data.drafts[rid],has=Object.values(d.exercises).some(st=>completedSets(st).length);if(!has){toast('Todavía no hay series guardadas');return}const archived=clone(d);archived.finishedAt=nowISO();archived.durationSec=elapsedSeconds(d);archived.routineName=ROUTINES[rid].name;data.history.push(archived);if(d.sourceScheduleId)data.schedules=data.schedules.filter(x=>x.id!==d.sourceScheduleId);delete data.drafts[rid];save();toast('Sesión finalizada. La próxima usará estos pesos y reps.');showChooser();renderProgress();renderHistory();if(typeof renderCalendar==='function')renderCalendar()};
