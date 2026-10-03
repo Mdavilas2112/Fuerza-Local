@@ -1,5 +1,9 @@
-const CACHE='fuerza-tracker-v2';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const CACHE='fuerza-tracker-v3';
+const ASSETS=[
+  './','./index.html','./styles.css','./manifest.webmanifest',
+  './routines.js','./data.js','./ui-session-a.js','./ui-session-b.js',
+  './ui-progress.js','./ui-data.js','./icon-192.png','./icon-512.png'
+];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(Promise.all([
   caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))),
@@ -7,7 +11,9 @@ self.addEventListener('activate',e=>e.waitUntil(Promise.all([
 ])));
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
-  e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{
-    const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r;
-  }).catch(()=>cached)));
+  e.respondWith(fetch(e.request).then(r=>{
+    const copy=r.clone();
+    caches.open(CACHE).then(c=>c.put(e.request,copy));
+    return r;
+  }).catch(()=>caches.match(e.request)));
 });
