@@ -31,3 +31,4 @@ const ROUTINES={
  ]}
 };
 const ROUTINE_IDS=['monday','wednesday','friday'];
+const BUILTIN_ROUTINE_IDS=[...ROUTINE_IDS];
