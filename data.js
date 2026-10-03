@@ -45,9 +45,7 @@ function normalizeV3(d){
  const out=blankData();if(!d||typeof d!=='object')return out;
  out.history=Array.isArray(d.history)?d.history:[];out.legacy=Array.isArray(d.legacy)?d.legacy:[];out.schedules=Array.isArray(d.schedules)?d.schedules:[];
  out.orders={...defaultOrder(),...(d.orders||{})};out.drafts=d.drafts&&typeof d.drafts==='object'?d.drafts:{};
- const oldDataRef=globalThis.data;globalThis.data=out;
  Object.keys(out.drafts).forEach(rid=>{if(ROUTINES[rid])out.drafts[rid]=normalizeDraft(out.drafts[rid],rid);else delete out.drafts[rid]});
- globalThis.data=oldDataRef;
  out.version=4;return out
 }
 function migrateOld(){
@@ -87,8 +85,8 @@ function startPaceTimer(d,kind,seconds,label){d.paceTimer={kind,active:true,endA
 function clearPaceTimer(d){d.paceTimer=basePace();save()}
 function pauseDraft(d){
  if(d.paused)return;const now=Date.now();d.paused=true;d.pausedAt=new Date(now).toISOString();
- const p=d.paceTimer;if(p?.active&&p.endAt){p.remaining=Math.max(0,Math.ceil((new Date(p.endAt).getTime()-now)/1000));p.endAt=null}
- const r=ROUTINES[d.routineId];r.exercises.forEach(ex=>{const st=d.exercises[ex.id];if(st?.timerActive&&st.timerEnd){st.remaining=Math.max(0,Math.ceil((new Date(st.timerEnd).getTime()-now)/1000));st.timerEnd=null}});
+ const p=d.paceTimer;if(p?.active&&p.endAt){p.remaining=Math.max(0,Math.ceil((new Date(p.endAt).getTime()-now)/1000));p.endAt=null;if(p.remaining<=0)p.active=false}
+ const r=ROUTINES[d.routineId];r.exercises.forEach(ex=>{const st=d.exercises[ex.id];if(st?.timerActive&&st.timerEnd){st.remaining=Math.max(0,Math.ceil((new Date(st.timerEnd).getTime()-now)/1000));st.timerEnd=null;if(st.remaining<=0)st.timerActive=false}});
  save()
 }
 function resumeDraft(d){
