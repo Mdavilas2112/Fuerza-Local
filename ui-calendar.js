@@ -1,6 +1,7 @@
 const calendarGrid=document.getElementById('calendarGrid'),monthTitle=document.getElementById('monthTitle'),dayDetails=document.getElementById('dayDetails'),selectedDateTitle=document.getElementById('selectedDateTitle'),scheduleTime=document.getElementById('scheduleTime'),scheduleRoutine=document.getElementById('scheduleRoutine'),scheduleAdd=document.getElementById('scheduleAdd'),scheduleHint=document.getElementById('scheduleHint');
 const calNow=new Date(),calendarState={year:calNow.getFullYear(),month:calNow.getMonth(),selected:localYMD(calNow)};
-function refreshScheduleRoutineOptions(){const current=scheduleRoutine.value;scheduleRoutine.innerHTML='';ROUTINE_IDS.forEach(rid=>{const r=ROUTINES[rid],o=document.createElement('option');o.value=rid;o.textContent=r.day+' · '+r.name;scheduleRoutine.appendChild(o)});if(ROUTINES[current])scheduleRoutine.value=current}\nrefreshScheduleRoutineOptions();
+function refreshScheduleRoutineOptions(){const current=scheduleRoutine.value;scheduleRoutine.innerHTML='';ROUTINE_IDS.forEach(rid=>{const r=ROUTINES[rid],o=document.createElement('option');o.value=rid;o.textContent=r.day+' · '+r.name;scheduleRoutine.appendChild(o)});if(ROUTINES[current])scheduleRoutine.value=current}
+refreshScheduleRoutineOptions();
 function parseYMD(ymd){const [y,m,d]=ymd.split('-').map(Number);return new Date(y,m-1,d)}
 function ymdFromParts(y,m,d){return [y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-')}
 function dateTitle(ymd){return new Intl.DateTimeFormat('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(parseYMD(ymd))}
