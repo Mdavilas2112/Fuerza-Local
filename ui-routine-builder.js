@@ -61,11 +61,11 @@ function attachPlanDrag(handle,row,list,onChange){
  handle.addEventListener('mousedown',e=>{if(e.button!==0)return;e.preventDefault();begin(e.clientY,'mouse');const mm=ev=>{ev.preventDefault();move(ev.clientX,ev.clientY)},mu=ev=>{document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);end()};document.addEventListener('mousemove',mm,{passive:false});document.addEventListener('mouseup',mu)})
 }
 function renderRoutinePlanPreview(rid,container){
- const r=ROUTINES[rid],rest=persistentRestState(rid),state={order:[...(data.orders[rid]||r.exercises.map(e=>e.id))],restMap:{...rest.restMap},blockRest:rest.blockRest,linearSetRest:rest.linearSetRest,linearExerciseRest:rest.linearExerciseRest};
+ const r=ROUTINES[rid],rest=persistentRestState(rid),draft=data.drafts[rid],next=data.nextOverrides[rid],state={order:[...(draft?.order||next?.order||data.orders[rid]||r.exercises.map(e=>e.id))],restMap:{...rest.restMap,...(next?.restMap||{}),...(draft?.restMap||{})},blockRest:Number(draft?.blockRest??next?.blockRest??rest.blockRest),linearSetRest:Number(draft?.linearSetRest??next?.linearSetRest??rest.linearSetRest),linearExerciseRest:Number(draft?.linearExerciseRest??next?.linearExerciseRest??rest.linearExerciseRest)};
  container.innerHTML='';
  const intro=document.createElement('div');intro.className='plan-summary';
  intro.innerHTML='<div><b>Flujo:</b> '+(r.mode==='linear'?'Ejercicio por ejercicio':r.flow)+'</div>'+(r.setup?'<div><b>Setup:</b> '+r.setup+'</div>':'')+'<div class="drag-hint"><b>⠿</b> Mantén pulsado y arrastra para cambiar el orden.</div>';
- container.appendChild(intro);
+ if(next&&!draft){const note=document.createElement('div');note.className='next-plan-note';note.textContent='Este orden/descanso se usará solo en el próximo entrenamiento.';container.appendChild(note)}container.appendChild(intro);
  if(r.mode==='linear'){
   const rests=document.createElement('div');rests.className='plan-rest-grid';
   rests.innerHTML='<label><span>Entre series</span><input type="number" min="0" step="5" data-set-rest value="'+state.linearSetRest+'"></label><label><span>Entre ejercicios</span><input type="number" min="0" step="5" data-ex-rest value="'+state.linearExerciseRest+'"></label>';
