@@ -29,7 +29,7 @@ function normalizeDraft(d,rid){
  const r=ROUTINES[rid];if(!r)return d;
  const out=d&&typeof d==='object'?d:{};
  out.id=out.id||'d_'+Date.now();out.routineId=rid;out.startedAt=out.startedAt||nowISO();out.updatedAt=out.updatedAt||out.startedAt;
- out.order=Array.isArray(out.order)?out.order:[...(data?.orders?.[rid]||r.exercises.map(e=>e.id))];
+ out.order=Array.isArray(out.order)?out.order:[...r.exercises.map(e=>e.id)];
  out.paused=!!out.paused;out.pausedAt=out.pausedAt||null;out.pausedMs=Number.isFinite(out.pausedMs)?out.pausedMs:0;
  out.paceTimer={...basePace(),...(out.paceTimer||{})};
  out.exercises=out.exercises&&typeof out.exercises==='object'?out.exercises:{};
