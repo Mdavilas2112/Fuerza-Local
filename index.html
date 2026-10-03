@@ -24,6 +24,13 @@
   </section>
 
   <section id="sessionView" class="hidden">
+    <div id="workoutStrip" class="workout-strip">
+      <div class="strip-item"><span>TIEMPO</span><b id="totalElapsed">00:00</b></div>
+      <div class="strip-item"><span>SIG. SERIE</span><b id="nextSetTimer">--:--</b></div>
+      <div class="strip-item"><span>SIG. EJERCICIO</span><b id="nextExerciseTimer">--:--</b></div>
+      <div id="pauseBadge" class="pause-badge hidden">PAUSA</div>
+    </div>
+
     <div class="card summary">
       <div class="session-head"><div><div class="eyebrow" id="sessionDay"></div><div class="title" id="sessionName"></div><div class="sub" id="sessionMeta"></div></div><button id="orderBtn" class="iconbtn" aria-label="Cambiar orden">↕</button></div>
       <div class="progressbar"><span id="sessionProgress"></span></div>
@@ -33,6 +40,10 @@
     <div class="section">EJERCICIOS ACTIVOS</div>
     <div id="exerciseList"></div>
     <button id="finishSession" class="finish">Finalizar sesión completa</button>
+    <div class="session-controls">
+      <button id="pauseSession" class="ghost">⏸ Pausar sesión</button>
+      <button id="discardSession" class="discard">Descartar sesión</button>
+    </div>
     <button id="backToRoutines" class="ghost" style="width:100%;margin-top:8px">Volver a rutinas</button>
   </section>
 </main>
@@ -42,6 +53,27 @@
   <section id="progressDetail" class="hidden"><button id="progressBack" class="back">← Volver</button><div class="card"><div id="detailName" class="title"></div><div id="detailSub" class="sub"></div><div id="recordGrid" class="record-grid"></div><div id="metricTabs" class="tabs"></div><canvas id="chart" width="720" height="215"></canvas><div class="section">SESIONES</div><div id="evoTable"></div></div></section>
 </main>
 
+<main id="calendarView" class="hidden">
+  <div class="card summary">
+    <div class="eyebrow">CALENDARIO</div>
+    <div class="calendar-nav"><button id="prevMonth" class="iconbtn" aria-label="Mes anterior">‹</button><div><div id="monthTitle" class="title calendar-title"></div><div class="sub">Entrenamientos realizados y programados</div></div><button id="nextMonth" class="iconbtn" aria-label="Mes siguiente">›</button></div>
+  </div>
+  <div class="calendar-week"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+  <div id="calendarGrid" class="calendar-grid"></div>
+  <div class="calendar-legend"><span><i class="dot trained-dot"></i> Entrené</span><span><i class="dot planned-dot"></i> Programado</span></div>
+  <div id="selectedDateTitle" class="section">DÍA SELECCIONADO</div>
+  <div id="dayDetails"></div>
+  <div id="scheduleBox" class="card schedule-box">
+    <div class="eyebrow">PROGRAMAR ENTRENAMIENTO</div>
+    <div class="schedule-fields">
+      <label><span>Hora</span><input id="scheduleTime" type="time"></label>
+      <label><span>Rutina</span><select id="scheduleRoutine"></select></label>
+      <button id="scheduleAdd" class="cta">Programar</button>
+    </div>
+    <div id="scheduleHint" class="sub" style="margin-top:8px"></div>
+  </div>
+</main>
+
 <main id="dataView" class="hidden">
   <div class="card summary"><div class="eyebrow">DATOS</div><div class="title">Historial y backup</div><div class="sub">Todo se guarda localmente en este iPhone.</div></div>
   <div class="section">BACKUP</div><div class="tools"><button id="exportJson">Exportar JSON</button><button id="exportCsv">Exportar CSV</button><label class="filelabel">Importar JSON<input id="importJson" type="file" accept=".json,application/json" class="hidden"></label><button id="clearAll" class="danger">Borrar todo</button></div>
@@ -49,7 +81,12 @@
 </main>
 </div>
 
-<nav class="bottomnav"><button id="navTrain" class="active"><span class="navico">🏋️</span>Entrenar</button><button id="navProgress"><span class="navico">📈</span>Progreso</button><button id="navData"><span class="navico">🗂️</span>Datos</button></nav>
+<nav class="bottomnav">
+  <button id="navTrain" class="active"><span class="navico">🏋️</span>Entrenar</button>
+  <button id="navProgress"><span class="navico">📈</span>Progreso</button>
+  <button id="navCalendar"><span class="navico">📅</span>Calendario</button>
+  <button id="navData"><span class="navico">🗂️</span>Datos</button>
+</nav>
 <div id="toast" class="toast"></div>
 
 <script src="routines.js"></script>
@@ -57,6 +94,7 @@
 <script src="ui-session-a.js"></script>
 <script src="ui-session-b.js"></script>
 <script src="ui-progress.js"></script>
+<script src="ui-calendar.js"></script>
 <script src="ui-data.js"></script>
 </body>
 </html>
