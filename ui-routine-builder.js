@@ -37,7 +37,7 @@ function askPlanScope(rid,state){
  const old=document.getElementById('planScopeOverlay');if(old)old.remove();
  const overlay=document.createElement('div');overlay.id='planScopeOverlay';overlay.className='editor-overlay';
  const box=document.createElement('div');box.className='scope-card';
- box.innerHTML='<div class="eyebrow">GUARDAR CAMBIOS</div><div class="title">¿Cómo quieres aplicar este plan?</div><div class="sub scope-copy">Puedes usar este orden y estos descansos solo en el próximo entrenamiento, o dejarlos como configuración habitual de esta rutina.</div><button class="scope-future">Guardar también para futuros entrenamientos</button><button class="scope-once">Solo para este entrenamiento</button><button class="scope-cancel">Cancelar</button>';
+ const targetText=data.drafts[rid]?'esta sesión':'el próximo entrenamiento';box.innerHTML='<div class="eyebrow">GUARDAR CAMBIOS</div><div class="title">¿Cómo quieres aplicar este plan?</div><div class="sub scope-copy">Puedes usar este orden y estos descansos solo en '+targetText+', o dejarlos como configuración habitual de esta rutina.</div><button class="scope-future">Guardar también para futuros entrenamientos</button><button class="scope-once">Solo para este entrenamiento</button><button class="scope-cancel">Cancelar</button>';
  overlay.appendChild(box);document.body.appendChild(overlay);document.body.classList.add('modal-open');
  const close=()=>{overlay.remove();document.body.classList.remove('modal-open')};
  box.querySelector('.scope-future').onclick=()=>{applyPlanState(rid,state,'future');close();toast('Plan guardado para futuras sesiones')};
@@ -81,7 +81,7 @@ function renderRoutinePlanPreview(rid,container){
   const info=document.createElement('div');info.className='plan-edit-info';info.innerHTML='<b>'+(ex.code||i+1)+' · '+ex.name+'</b><span>'+ex.sets+'×'+ex.min+'–'+ex.max+'</span>';
   row.append(handle,info);
   if(r.mode!=='linear'){
-   const field=document.createElement('label');field.className='plan-rest-field';const between=String(ex.code).endsWith('1')?'Entre ejercicios':'Entre rondas';
+   const field=document.createElement('label');field.className='plan-rest-field';const between=String(ex.code).endsWith('1')?'Entre ejercicios':'Entre series/rondas';
    field.innerHTML='<span>'+between+'</span><input type="number" min="0" step="5" value="'+(state.restMap[eid]??ex.rest??90)+'">';
    field.querySelector('input').oninput=e=>state.restMap[eid]=Math.max(0,Number(e.target.value)||0);row.appendChild(field)
   }
